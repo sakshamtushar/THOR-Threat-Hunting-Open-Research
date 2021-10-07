@@ -1,0 +1,12 @@
+instances:
+  - name: es01
+    dns:
+      - es01
+      - thor_es
+    ip:
+      - 192.168.226.136
+
+  - name: 'kib01'
+    dns:
+      - kib01
+      - thor_es
