@@ -1,6 +1,7 @@
 Do not follow in Production, this imperative method is for quickly projecting a testable lab setup that can be used for Personal Lab Environment.
 Try to use declarative devops principals for deployement on the stack, (Will try to get that up and RUnning for my lab as well , but later.)
 
+Docker files is modified to setup a single node instance of Elasticsearch and a single instance of Kibana.
 
 Steps to Start the Cluster : 
 docker-compose -f create-certs.yml run --rm create_certs
