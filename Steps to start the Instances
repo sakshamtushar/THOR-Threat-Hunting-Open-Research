@@ -29,3 +29,7 @@ sudo ./elastic-agent install  -f \
   Install the agent with --insecure flag to bypass SSL verification : 
   Example : 
   sudo ./elastic-agent install -f --url=https://192.168.0.101:8220 --enrollment-token=cnk4anZud0JjMnJ3a0V0VXcxTXM6TtRnp6MXhOZw== --insecure
+  
+  
+  Setting up & Running a Local JupyterLab Server: 
+  docker run --rm -p 10000:8888 -e JUPYTER_ENABLE_LAB=yes -v "${PWD}":/home/jovyan/work jupyter/all-spark-notebook:33add21fab64
