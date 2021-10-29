@@ -36,3 +36,8 @@ sudo ./elastic-agent install  -f \
   Setting up & Running a Local JupyterLab Server: 
 docker run -p 8888:8888 -e JUPYTER_ENABLE_LAB=yes -v "${PWD}":/home/jovyan/work jupyter/all-spark-notebook:33add21fab64
 Reference : https://jupyter-docker-stacks.readthedocs.io/en/latest/
+
+Python Packages Required for Connection with Elasticsearch 7.15.1 : 
+elasticsearch  (Conda install elasticsearch=7.15.1)
+elasticsearch  (conda install elasticsearch-dsl=7.4.0)
+
