@@ -1,33 +1,35 @@
 Do not follow in Production, this imperative method is for quickly projecting a testable lab setup that can be used for Personal Lab Environment.
 Try to use declarative devops principals for deployement on the stack, (Will try to get that up and RUnning for my lab as well , but later.)
 
-Docker files is modified to setup a single node instance of Elasticsearch and a single instance of Kibana.
+Docker file is modified to setup a single node instance of Elasticsearch and a single instance of Kibana.
 
-Steps to Start the Cluster : 
-docker-compose -f create-certs.yml run --rm create_certs
-docker-compose -f elastic-docker-tls.yml up -d
-docker exec es01 /bin/bash -c "bin/elasticsearch-setup-passwords auto --batch --url https://ip:9200"
-Update password in elastic-docker-tls.yml file for kibana_system user
-docker-compose -f elastic-docker-tls.yml stop
-docker-compose -f elastic-docker-tls.yml up -d
+### Steps to Start the Cluster : 
+* Change the IP in instances.yml file to your Host IP on which container will be running.
+* docker-compose -f create-certs.yml run --rm create_certs
+* docker-compose -f elastic-docker-tls.yml up -d
+* docker exec es01 /bin/bash -c "bin/elasticsearch-setup-passwords auto --batch --url https://ip:9200"
+* Update password in elastic-docker-tls.yml file for kibana_system user
+* docker-compose -f elastic-docker-tls.yml stop
+* docker-compose -f elastic-docker-tls.yml up -d
 
 
-To Install Elastic agent- 
+### To Install Elastic agent- 
 
-Setup Fleet server: Get the elastic agent of same version as of elasticsearch and install on the container/machines that you want to use as Fleet server
-Grab the CA certificate from elasticsearch instance,(/var/snap/docker/common/var-lib-docker/volumes/es_certs/_data/ca location should have the certificate file).
-Install the CA file on fleet server, run the enrollment command : 
+#### Setup Fleet server: 
+* Get the elastic agent of same version as of elasticsearch and install on the container/machines that you want to use as Fleet server
+* Grab the CA certificate from elasticsearch instance,(/var/snap/docker/common/var-lib-docker/volumes/es_certs/_data/ca location should have the certificate file).
+* Install the CA file on fleet server, run the enrollment command : 
 Example : 
 sudo ./elastic-agent install  -f \
   --fleet-server-es=http://localhost:9200 \
   --fleet-server-service-token=AAEbAWVsYXN0aWMvZmxlaXQtc2VydmVzL3Rva2VuLTE2MeIzNTY1NTQ3Mji6dERXeE9XbW5RRTZqNlJMWEdIRzAtZw \
   --fleet-server-policy=27467ed1-1bfd-11ec-9b88-a7c3d83e2897
   
-  Setup Elastic_agent EDR : 
-  Use the same CA file to install on the Host, 
-  Configure Fleet settings(keep in mind the Port number is 8220 for fleet server and not 443 (that's for cloud deployment))
-  Install the agent with --insecure flag to bypass SSL verification : 
-  Example : 
+ #### Setup Elastic_agent EDR : 
+ * Use the same CA file to install on the Host, 
+ * Configure Fleet settings(keep in mind the Port number is 8220 for fleet server and not 443 (that's for cloud deployment))
+ * Install the agent with --insecure flag to bypass SSL verification : 
+ Example : 
   sudo ./elastic-agent install -f --url=https://192.168.0.101:8220 --enrollment-token=cnk4anZud0JjMnJ3a0V0VXcxTXM6TtRnp6MXhOZw== --insecure
   
   
