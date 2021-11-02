@@ -41,3 +41,10 @@ Python Packages Required for Connection with Elasticsearch 7.15.1 :
 elasticsearch  (Conda install elasticsearch=7.15.1)
 elasticsearch  (conda install elasticsearch-dsl=7.4.0)
 
+
+Other Notes: 
+During Working on this lab setup, i encountered a moment where no machine on my network was able to ping each other, although they were all on same Router.
+After digging a bit and updating drivers, Checking Network/DNS/gagteway configurations,nothing worked.
+I stumbled upon an issue on internet where it said that my ARP table could be corrupted and i should reset it : 
+netsh interface ip delete arpcache
+this reset my ARP table and i was able to ping and connect to other Hosts in my network. 
