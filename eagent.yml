@@ -1,0 +1,31 @@
+version: "3"
+services:
+  elastic-agent:
+    image: docker.elastic.co/beats/elastic-agent:7.15.1
+    container_name: elastic-agent
+    restart: always
+    user: root # note, synthetic browser monitors require this set to `elastic-agent`
+    environment:
+      - FLEET_ENROLLMENT_TOKEN=cmk4anZud0JjMnJ3a0V0VXcxTXM6VHIycE1hU0FTOE9mandKcXgzQllIUQ==
+      - FLEET_ENROLL=1
+      - FLEET_URL=http://192.168.0.101:8220
+      - FLEET_SERVER_ENABLE=true
+      - FLEET_SERVER_ELASTICSEARCH_HOST=https://192.168.0.101:9200
+      - FLEET_SERVER_SERVICE_TOKEN=AAEAAWVsYXN0aWMvZmxlZXQtc2VydmVyL3Rva2VuLTE2MzY1NzkwMDQ5MDI6TzNsNWE0U0NUNFdMcnVtUC14MjVldw
+      - FLEET_INSECURE=1
+      - FLEET_SERVER_INSECURE_HTTP=1
+      - FLEET_SERVER_ELASTICSEARCH_CA=/home/es_certs/ca/ca.crt
+    volumes:
+      - /var/snap/docker/common/var-lib-docker/volumes/es_certs/_data:/home/es_certs
+    networks:
+      - elastic
+    ports:
+      - 8220:8220
+
+volumes:
+  es_certs:
+    driver: local 
+
+networks:
+  elastic:
+    driver: bridge
