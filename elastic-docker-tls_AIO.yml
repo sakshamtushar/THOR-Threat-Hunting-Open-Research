@@ -1,0 +1,107 @@
+version: '2.2'
+
+services:
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${VERSION}
+    container_name: es01
+    environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - xpack.license.self_generated.type=trial 
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true 
+      - xpack.security.http.ssl.key=$CERTS_DIR/es01/es01.key
+      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.http.ssl.certificate=$CERTS_DIR/es01/es01.crt
+      - xpack.security.transport.ssl.enabled=true 
+      - xpack.security.transport.ssl.verification_mode=certificate 
+      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=$CERTS_DIR/es01/es01.crt
+      - xpack.security.transport.ssl.key=$CERTS_DIR/es01/es01.key
+
+      
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+      - certs:$CERTS_DIR
+    ports:
+      - 9200:9200
+    networks:
+      - elastic
+
+    healthcheck:
+      test: curl --cacert $CERTS_DIR/ca/ca.crt -s https://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  kib01:
+    image: docker.elastic.co/kibana/kibana:${VERSION}
+    container_name: kib01
+    depends_on: {"es01": {"condition": "service_healthy"}}
+    ports:
+      - 5601:5601
+    environment:
+      SERVERNAME: localhost
+      ELASTICSEARCH_URL: https://es01:9200
+      ELASTICSEARCH_HOSTS: https://es01:9200
+      ELASTICSEARCH_USERNAME: kibana_system
+      ELASTICSEARCH_PASSWORD: OPfG0925TRJPWTsYMpLi
+      ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES: $CERTS_DIR/ca/ca.crt
+      SERVER_SSL_ENABLED: "true"
+      SERVER_SSL_KEY: $CERTS_DIR/kib01/kib01.key
+      SERVER_SSL_CERTIFICATE: $CERTS_DIR/kib01/kib01.crt
+      XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY : vyADe2QreqPAyYdjcTc94MEHdWjzpjnt
+      
+    volumes:
+      - certs:$CERTS_DIR
+    networks:
+      - elastic
+
+
+  elastic-agent:
+    image: docker.elastic.co/beats/elastic-agent:${VERSION}
+    container_name: elastic-agent
+    restart: always
+    user: root # note, synthetic browser monitors require this set to `elastic-agent`
+    environment:
+      - FLEET_ENROLL=1
+      - FLEET_URL=https://es01:8220
+      - FLEET_SERVER_ENABLE=true
+      - FLEET_SERVER_ELASTICSEARCH_HOST=https://es01:9200
+      - FLEET_SERVER_SERVICE_TOKEN=AAEAAWVsYXN0aWMvZmxlZXQtc2VydmVyL3Rva2VuLTE2NDMyNjQ3MTYwNDY6bDJNMlAwd0JROUt2ci1OblRsNWhyUQ
+      - FLEET_INSECURE=1
+      - FLEET_SERVER_INSECURE_HTTP=1
+      - FLEET_SERVER_ELASTICSEARCH_CA=$CERTS_DIR/ca/ca.crt
+    volumes:
+      - certs:$CERTS_DIR
+    networks:
+      - elastic
+    ports:
+      - 8220:8220
+
+volumes:
+  data01:
+    driver: local
+  certs:
+    driver: local
+  metricbeat-data01:
+    driver: local    
+  es_certs:
+    driver: local 
+
+networks:
+  elastic:
+    driver: bridge
+
+
+
+
+
+
