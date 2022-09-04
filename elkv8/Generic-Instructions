@@ -1,0 +1,3 @@
+If using FLEET_SERVER_INSECURE_HTTP=1 for Elastic-agent-fleet-server Container. 
+Set the Server Hosts in Fleet settings from UI to http://IP:8220 (not HTTPS)
+and use --insecure to Connect the Agents to the fleet-server
