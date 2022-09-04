@@ -14,7 +14,8 @@ services:
       - FLEET_SERVER_ELASTICSEARCH_CA=/home/eagent-dc/ca.crt
     volumes:
       - /home/saksham/Documents/eagent-dc:/home/eagent-dc
-
+    ports:
+      - 8220:8220
 volumes:
   certs:
     driver: local
